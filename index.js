@@ -6,29 +6,6 @@ const port = process.env.PORT ||3000;
 
 app.use(express.json())
 
-app.get('/',(req,res)=>{       //req=request //res=respond
-    res.send('Helo World!')
-})
-
-app.post('/login', (req,res)=> {
-    console.log(req,body,username != 'shalini') 
-    return res.status(400).send('Invalid user')
-
-
-
-    //TODO: check if password is correct
-    if(req,body,password !='Shalini@00'){
-        return res.status(400).send('Invalid user')
-    }
-    
-});
-//res.send('login successfully')
-
-//app.post('/api/echo',(req,res)=>{})
-
-
-
-
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://b022210058:Shalini@00@cluster0.vf1sfvl.mongodb.net/?retryWrites=true&w=majority";
 
@@ -41,6 +18,7 @@ const client = new MongoClient(uri, {
   }
 });
 
+// connect to MongoDB
 async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
@@ -55,26 +33,12 @@ async function run() {
 }
 run().catch(console.dir);
 
-//22/11/23
-app.post('/register' , (req, res) => {
-
-  client.db("maybank2u").collection("user".find({
-    "username": {$eq: req.body.username }
-  }).toArray().then((result)=> {
-    if (result.length > 0) {
-      res.status(400).send('username already exists')
-    
-    } else {
-      client.db("maybank2u".collection("users").insertone({
-          "username": req.body.username,
-          "password": req.body.password
-      }))
-
-      res.send('REGISTER SUCCESSFULLY')
-    }
-  }))
-})
-
+const db = client.db('STUDENT_AMS');
+const studentCollection = db.collection ('STUDENT';)
+const academicadminCollection = db.collection ('ACADEMICADMIN');
+const facultyCollection = db.collection ('FACULTY');
+ 
+// start the server
 app.listen(port,()=>{
     console.log('Example app listening on port ${port}')
 })
