@@ -40,6 +40,7 @@ const studentCollection = db.collection ('STUDENT');
 const academicadminCollection = db.collection ('ACADEMICADMIN');
 const facultyCollection = db.collection ('FACULTY');
 <<<<<<< HEAD
+<<<<<<< HEAD
 const cellCollection = db.collection ('CELL');
 
 =======
@@ -50,9 +51,11 @@ const administrator = db.collection ('admin');
 =======
 const facultyCollection = db.collection ('FACULTY');
 >>>>>>> 62069f1c5b5402a90f892a570d0140e12f46f9ae
+=======
+const administrator = db.collection ('admin');
+>>>>>>> c2f7e1a29908bb852acdbc1417bd40894198b950
 
 
->>>>>>> 0367313102e08fc241ca281449241efa8f494510
 // start the server
 app.listen(port,()=>{
     console.log('Example app listening on port ${port}')
