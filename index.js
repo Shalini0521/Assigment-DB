@@ -6,6 +6,7 @@ const port = process.env.PORT ||3000;
 
 app.use(express.json())
 
+//MongoDB collection URL
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://b022210058:Shalini@00@cluster0.vf1sfvl.mongodb.net/?retryWrites=true&w=majority";
 
@@ -33,13 +34,20 @@ async function run() {
 }
 run().catch(console.dir);
 
+//define collection name
 const db = client.db('STUDENT_AMS');
 const studentCollection = db.collection ('STUDENT');
 const academicadminCollection = db.collection ('ACADEMICADMIN');
 const facultyCollection = db.collection ('FACULTY');
+<<<<<<< HEAD
 
 const administrator = db.collection ('admin');
  
+=======
+const facultyCollection = db.collection ('FACULTY');
+
+
+>>>>>>> 0367313102e08fc241ca281449241efa8f494510
 // start the server
 app.listen(port,()=>{
     console.log('Example app listening on port ${port}')
