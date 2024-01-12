@@ -39,15 +39,9 @@ const db = client.db('STUDENT_AMS');
 const studentCollection = db.collection ('STUDENT');
 const academicadminCollection = db.collection ('ACADEMICADMIN');
 const facultyCollection = db.collection ('FACULTY');
-<<<<<<< HEAD
-
 const administrator = db.collection ('admin');
- 
-=======
-const facultyCollection = db.collection ('FACULTY');
 
 
->>>>>>> 0367313102e08fc241ca281449241efa8f494510
 // start the server
 app.listen(port,()=>{
     console.log('Example app listening on port ${port}')
