@@ -34,9 +34,11 @@ async function run() {
 run().catch(console.dir);
 
 const db = client.db('STUDENT_AMS');
-const studentCollection = db.collection ('STUDENT';)
+const studentCollection = db.collection ('STUDENT');
 const academicadminCollection = db.collection ('ACADEMICADMIN');
 const facultyCollection = db.collection ('FACULTY');
+
+const administrator = db.collection ('admin');
  
 // start the server
 app.listen(port,()=>{
