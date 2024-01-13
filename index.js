@@ -40,44 +40,8 @@ const studentCollection = db.collection ('STUDENT');
 const academicadminCollection = db.collection ('ACADEMICADMIN');
 const facultyCollection = db.collection ('FACULTY');
 
-
-const cellCollection = db.collection ('CELL');
-
-
-const administrator = db.collection ('admin');
  
-// View all students
-app.get('/students', async (req, res) => {
-  try {
-    const db = client.db('STUDENR_AMS');
-    const prisoner = await db.collection('ADMIN').find().toArray();
-    res.send(prisoner);
-  } catch (error) {
-    res.status(500).send('Error viewing admins');
-  }
-});
 
-// View all admins
-app.get('/admins', async (req, res) => {
-  try {
-    const db = client.db('PRISON_VMS');
-    const prisoner = await db.collection('ADMIN').find().toArray();
-    res.send(prisoner);
-  } catch (error) {
-    res.status(500).send('Error viewing admins');
-  }
-});
-
-// View all admins
-app.get('/admins', async (req, res) => {
-  try {
-    const db = client.db('PRISON_VMS');
-    const prisoner = await db.collection('ADMIN').find().toArray();
-    res.send(prisoner);
-  } catch (error) {
-    res.status(500).send('Error viewing admins');
-  }
-});
 
 // start the server
 app.listen(port,()=>{
