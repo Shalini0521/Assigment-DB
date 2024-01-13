@@ -6,3 +6,5 @@ const adminCredentials = {
   function login() {
     const usernameInput = document.getElementById('username');
     const passwordInput = document.getElementById('password');
+
+  }

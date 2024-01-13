@@ -39,22 +39,45 @@ const db = client.db('STUDENT_AMS');
 const studentCollection = db.collection ('STUDENT');
 const academicadminCollection = db.collection ('ACADEMICADMIN');
 const facultyCollection = db.collection ('FACULTY');
-<<<<<<< HEAD
-<<<<<<< HEAD
+
+
 const cellCollection = db.collection ('CELL');
 
-=======
-<<<<<<< HEAD
 
 const administrator = db.collection ('admin');
  
-=======
-const facultyCollection = db.collection ('FACULTY');
->>>>>>> 62069f1c5b5402a90f892a570d0140e12f46f9ae
-=======
-const administrator = db.collection ('admin');
->>>>>>> c2f7e1a29908bb852acdbc1417bd40894198b950
+// View all students
+app.get('/students', async (req, res) => {
+  try {
+    const db = client.db('STUDENR_AMS');
+    const prisoner = await db.collection('ADMIN').find().toArray();
+    res.send(prisoner);
+  } catch (error) {
+    res.status(500).send('Error viewing admins');
+  }
+});
 
+// View all admins
+app.get('/admins', async (req, res) => {
+  try {
+    const db = client.db('PRISON_VMS');
+    const prisoner = await db.collection('ADMIN').find().toArray();
+    res.send(prisoner);
+  } catch (error) {
+    res.status(500).send('Error viewing admins');
+  }
+});
+
+// View all admins
+app.get('/admins', async (req, res) => {
+  try {
+    const db = client.db('PRISON_VMS');
+    const prisoner = await db.collection('ADMIN').find().toArray();
+    res.send(prisoner);
+  } catch (error) {
+    res.status(500).send('Error viewing admins');
+  }
+});
 
 // start the server
 app.listen(port,()=>{
