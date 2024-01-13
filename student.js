@@ -66,4 +66,3 @@ function displayFun(studentDataArr) {
 }
 displayFun(studentDataArr);
 
-  }
