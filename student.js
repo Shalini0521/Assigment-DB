@@ -5,15 +5,15 @@ function submitFun1(e) {
     document.querySelector("#tbody").innerHTML = "";
     e.preventDefault();
     var name = document.querySelector("#name").value;
-    var number = document.querySelector("#number").value;
-    var city = document.querySelector("#city").value;
-    var rollNo = document.querySelector("#rollNo").value;
+    var program = document.querySelector("#program").value;
+    var section = document.querySelector("#section").value;
+    var matrixno = document.querySelector("#matrixno").value;
 
     var studentObj = {
         name: name,
-        number: number,
-        city: city,
-        rollNo: rollNo
+        program: program,
+        section: section,
+        matrixno: matrixno
     }
 
     studentDataArr.push(studentObj);

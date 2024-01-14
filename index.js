@@ -139,6 +139,143 @@ app.post('/register', (req, res) => {
   });
 });
 
+// Create a student
+document = document.getElementById("form1").addEventListener("submit", submitFun1);
+
+var studentDataArr =JSON.parse(localStorage.getItem("studentData"))|| [];
+function submitFun1(e) {
+    document.querySelector("#tbody").innerHTML = "";
+    e.preventDefault();
+    var name = document.querySelector("#name").value;
+    var program = document.querySelector("#program").value;
+    var section = document.querySelector("#section").value;
+    var matrixno = document.querySelector("#matrixno").value;
+
+    var studentObj = {
+        name: name,
+        program: program,
+        section: section,
+        matrixno: matrixno
+    }
+
+    studentDataArr.push(studentObj);
+    localStorage.setItem("studentData", JSON.stringify(studentDataArr));
+    document.querySelector("#form1").reset();
+    alert("Student Added Successfully");
+
+    displayFun(studentDataArr)
+}
+
+function displayFun(studentDataArr) {
+
+    var count = 1;
+    studentDataArr.map(function (item) {
+    
+        var tr = document.createElement("tr");
+
+        var td1 = document.createElement("td");
+        td1.innerHTML = count++
+        var td2 = document.createElement("td");
+        td2.innerHTML = item.name;
+        var td3 = document.createElement("td");
+        td3.innerHTML = item.number;
+        var td4 = document.createElement("td");
+        td4.innerHTML = item.city;
+        var td5 = document.createElement("td");
+        td5.innerHTML = item.rollNo;
+        var td6 = document.createElement("td");
+        var btn1 = document.createElement("button");
+        btn1.innerHTML = "P";
+        btn1.addEventListener("click", function () {
+            td6.innerHTML = "<button >Present</button>";
+        });
+        var btn2 = document.createElement("button");
+        btn2.innerHTML = "A";
+        btn2.addEventListener("click", function () {
+            td6.innerHTML = "<button id='absent'>Absent</button>";
+        
+        });
+        td6.classList.add("td6");
+        td6.append(btn1, btn2);
+
+        tr.append(td1, td2, td3, td4, td5, td6);
+
+        document.querySelector("#tbody").append(tr);
+
+    });
+
+
+}
+displayFun(studentDataArr);
+
+app.post('/createstudentData', verifyToken, (req, res) => {
+  const {
+    name,
+    city,
+    relationship,
+    visitorId
+  } = req.body;
+
+  const visitorData = {
+    name,
+    program,
+    section,
+    matrixno
+  };
+
+  studentCollection
+    .insertOne(studentData)
+    .then(() => {
+      res.send(studentData);
+    })
+    .catch((error) => {
+      console.error('Error creating student:', error);
+      res.status(500).send('An error occurred while creating the student');
+    });
+});
+
+//update student
+app.patch('/updatestudent/:id', verifyToken, async (req, res) => {
+  try {
+    const objectId = new ObjectId(req.params.id);
+    const {matrixno} = req.body;
+
+    const updateResult = await db.collection('STUDENT').updateOne(
+      { _id: objectId }, 
+      { $set: {matrixno }),
+
+    if (updateResult.modifiedCount === 1) {
+      res.send('Student data successfully updated!');
+    } else {
+      res.status(404).send('Student not found');
+    }
+  } catch (error) {
+    console.error('Error updating student data:', error);
+    res.status(500).send('Error updating student data');
+  }
+});
+
+
+
+//Delete a student
+app.delete('/deletestudent/:id', verifyToken, async (req, res) => {
+  const objectId = new ObjectId(req.params);
+  
+
+  try {
+    const deleteResult = await db.collection('STUDENT').deleteOne({ _id:objectId });
+
+    if (deleteResult.deletedCount === 1) {
+      res.send('Student deleted successfully');
+    } else {
+      res.status(404).send('Student not found');
+    }
+  } catch (error) {
+    console.error('Error deleting student:', error);
+    res.status(500).send('Error deleting student');
+  }
+});
+
 
 
 // start the server
