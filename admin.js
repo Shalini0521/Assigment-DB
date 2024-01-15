@@ -1,6 +1,6 @@
 /**login admin function*/
 async function login(reqUsername, reqPassword) {
-    return adminCollection.findOne({ username: reqUsername, password: reqPassword })
+    return client.db.collection({ username: reqUsername, password: reqPassword })
       .then(matchUsers => {
         if (!matchUsers) {
           return {
@@ -25,7 +25,7 @@ async function login(reqUsername, reqPassword) {
   
   /**create admin function */
   async function register(reqUsername, reqPassword) {
-    return adminCollection.insertOne({
+    return client.db.insertOne({
       username: reqUsername,
       password: reqPassword,
       
