@@ -41,12 +41,13 @@ app.post('/register',(req,res)=> {
   const{username,password}=req.body;
   console.log(username,password);
 
-  const hash = bcrypt.hashSync(password,6)
+  const hash = bcrypt.hashSync(password,6);
 
   client.db("BENR2423").collection("users").insertOne({"username":username,"password":hash});
-  console.log(hash)
+  console.log(hash);
+
   res.send("register success")
-});;
+});
 
 // start the server
 app.listen(port, () => {
