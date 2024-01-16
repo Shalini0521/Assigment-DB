@@ -2,7 +2,7 @@ const { request } = require("express");
 
 const express = require('express')
 const app = express()
-const port = process.env.PORT ||3000;
+const port = process.env.PORT ||3001;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -47,6 +47,15 @@ app.post('/student',(req,res)=> {
   console.log(hash);
 
   res.send("student added")
+});
+
+app.get('/student', async (req, res) => {
+  try {
+    const students = await students.find();
+    res.json(students);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 

@@ -2,7 +2,7 @@ const { request } = require("express");
 
 const express = require('express')
 const app = express()
-const port = process.env.PORT ||3001;
+const port = process.env.PORT ||3000;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 //const attendance = require ('./attendance.js')
