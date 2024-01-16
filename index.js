@@ -2,9 +2,10 @@ const { request } = require("express");
 
 const express = require('express')
 const app = express()
-const port = process.env.PORT ||3000;
+const port = process.env.PORT ||3001;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+//const attendance = require ('./attendance.js')
 
 app.use(express.json())
 
@@ -36,6 +37,50 @@ async function run() {
 }
 run().catch(console.dir);
 
+//app.get('/attendance', (req, res) => {
+// res.send(attendance)
+//});
+
+function verifyToken(req, res, next) {
+  let header = req.headers.authorization;
+
+  if (!header) {
+    return res.status(401).send('Unauthorized request');
+  }
+
+  let tokens = header.split(' ')[1]; // Ensure correct space-based split
+
+  try {
+    // Log token for inspection
+    console.log('Received token:', tokens);
+
+    jwt.verify(tokens, 'very strong password', async (err, decoded) => {
+      if (err) {
+        console.error('Error verifying token:', err);
+        return res.status(401).send('Invalid token');
+      }
+
+      console.log('Decoded token:', decoded);
+
+      if (!decoded || !decoded.role) { // Check for missing properties
+        return res.status(401).send('Invalid or incomplete token');
+      }
+
+      if (decoded.role !== 'admin') {
+        return res.status(401).send('Invalid role');
+      }
+
+      next();
+    });
+  } catch (error) {
+    console.error('Unexpected error:', error);
+    res.status(500).send('Internal server error');
+  }
+}
+
+
+app.use(express.json())
+
 //register
 app.post('/register',(req,res)=> {
   const{username,password}=req.body;
@@ -51,37 +96,26 @@ app.post('/register',(req,res)=> {
 
 //login
 app.post('/login', async (req, res) => {
-  console.log('login', req.body);
-  const { username, password } = req.body;
+  try {
+    const userData = await userModel.login(req.body.username, req.body.password);
 
-  console.log(username, password);
-
-  const user = await client.db("BENR2423").collection("users").find({ "username": username }).toArray();
-  console.log(user);
-
-  if (user) {
-    bcrypt.compare(password, user[0].password, (err, result) => {
-      if (result) {
-
-        const token = jwt.sign({
-
-          user: user[0].username,
-          role: user[0].role
-        }, "very strong password", { expiresIn: "365d" });
-
-        res.send(token)
-      }
-      else {
-        res.send("wrong password")
-      }
-
-    })
-  } else {
-
-    res.send("user not found")
-
+    // Further code handling successful login
+    res.send("Login successful!");
+  } catch (error) {
+    // Handle login failure
+    res.status(401).send("Invalid credentials");
   }
 });
+
+	res.status(200).json({
+		_id: users._id,
+		username: users.username,
+		role: users.role,
+		token: generateAccessToken({
+			_id: users._id,
+			role: users.role
+		})
+	});
 
 //logout
 app.post('/logout', verifyToken, (req, res) => {
