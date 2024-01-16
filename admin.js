@@ -1,100 +1,56 @@
-/**login admin function*/
-async function login(reqUsername, reqPassword) {
-    return client.db.collection({ username: reqUsername, password: reqPassword })
-      .then(matchUsers => {
-        if (!matchUsers) {
-          return {
-            success: false,
-            message: "Admin not found!"
-          };
-        } else {
-          return {
-            success: true,
-            users: matchUsers
-          };
-        }
-      })
-      .catch(error => {
-          console.error('Error in login:', error);
-          return {
-            success: false,
-            message: "An error occurred during login."
-          };
-        });
-  }
-  
-  /**create admin function */
-  async function register(reqUsername, reqPassword) {
-    return client.db.insertOne({
-      username: reqUsername,
-      password: reqPassword,
-      
-    })
-      .then(() => {
-        return "Registration successful!";
-      })
-      .catch(error => {
-        console.error('Registration failed:', error);
-        return "Error encountered!";
-      });
-  }
-  
-  function generateToken(userData) {
-    const token = jwt.sign(userData, 'inipassword');
-    return token
-  
-  }
-  
-  function verifyToken(req, res, next) {
-    let header = req.headers.authorization;
-    console.log(header);
-  
-    let token = header.split(' ')[1];
-  
-    jwt.verify(token, 'inipassword', function (err, decoded) {
-      if (err) {
-        res.send('Invalid Token');
-      }
-  
-      req.user = decoded;
-      next();
-    });
-  }
-  
-  
-  
-  // Login Admin
-  app.post('/login', (req, res) => {
-    console.log(req.body);
-  
-    let result = login(req.body.username, req.body.password);
-    result.then(response => {
-      console.log(response); // Log the response received
-  
-      if (response.success) {
-        let token = generateToken(response.users);
-        res.send(token);
-      } else {
-        res.status(401).send(response.message);
-      }
-    }).catch(error => {
-      console.error('Error in login route:', error);
-      res.status(500).send("An error occurred during login.");
-    });
-  });
-  
-  
-  // Register Admin
-  app.post('/register', (req, res) => {
-    console.log(req.body);
-  
-    let result = register(req.body.username, req.body.password, req.body.name, req.body.email);
-    result.then(response => {
-      res.send(response);
-    }).catch(error => {
-      console.error('Error in register route:', error);
-      res.status(500).send("An error occurred during registration.");
-    });
-  });
+const { request } = require("express");
 
-  
+const express = require('express')
+const app = express()
+const port = process.env.PORT ||3000;
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
+app.use(express.json())
+
+//MongoDB collection URL
+
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://b022210058:tAGrofj9DyRYHqeo@cluster0.95rvnk9.mongodb.net/?retryWrites=true&w=majority";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+async function run() {
+  try {
+    // Connect the client to the server	(optional starting in v4.7)
+    await client.connect();
+    // Send a ping to confirm a successful connection
+    await client.db("admin").command({ ping: 1 });
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } finally {
+    // Ensures that the client will close when you finish/error
+    //await client.close();
+  }
+}
+run().catch(console.dir);
+
+//register
+app.post('/student',(req,res)=> {
+  const{name,matrixNo}=req.body;
+  console.log(name,matrixNo);
+
+  const hash = bcrypt.hashSync(matrixNo,15);
+
+  client.db("BENR2423").collection("student").insertOne({"name":name,"matrixNo":hash});
+  console.log(hash);
+
+  res.send("student added")
+});
+
+
+// start the server
+app.listen(port, () => {
+    console.log('Example app listening on port ${port}')
+})
