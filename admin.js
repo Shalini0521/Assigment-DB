@@ -36,7 +36,7 @@ async function run() {
 }
 run().catch(console.dir);
 
-//register
+//add student
 app.post('/student',(req,res)=> {
   const{name,matrixNo}=req.body;
   console.log(name,matrixNo);
