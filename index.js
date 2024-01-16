@@ -96,26 +96,37 @@ app.post('/register',(req,res)=> {
 
 //login
 app.post('/login', async (req, res) => {
-  try {
-    const userData = await userModel.login(req.body.username, req.body.password);
+  console.log('login', req.body);
+  const { username, password } = req.body;
 
-    // Further code handling successful login
-    res.send("Login successful!");
-  } catch (error) {
-    // Handle login failure
-    res.status(401).send("Invalid credentials");
+  console.log(username, password);
+
+  const user = await client.db("BENR2423").collection("users").find({ "username": username }).toArray();
+  console.log(user);
+
+  if (user) {
+    bcrypt.compare(password, user[0].password, (err, result) => {
+      if (result) {
+
+        const token = jwt.sign({
+
+          user: user[0].username,
+          role: user[0].role
+        }, "very strong password", { expiresIn: "365d" });
+
+        res.send(token)
+      }
+      else {
+        res.send("wrong password")
+      }
+
+    })
+  } else {
+
+    res.send("user not found")
+
   }
 });
-
-	res.status(200).json({
-		_id: users._id,
-		username: users.username,
-		role: users.role,
-		token: generateAccessToken({
-			_id: users._id,
-			role: users.role
-		})
-	});
 
 //logout
 app.post('/logout', verifyToken, (req, res) => {
