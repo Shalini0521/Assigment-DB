@@ -49,6 +49,48 @@ app.post('/register',(req,res)=> {
   res.send("register success")
 });
 
+//login
+app.post('/login', async (req, res) => {
+  console.log('login', req.body);
+  const { username, password } = req.body;
+
+  console.log(username, password);
+
+  const user = await client.db("BENR2423").collection("users").find({ "username": username }).toArray();
+  console.log(user);
+
+  if (user) {
+    bcrypt.compare(password, user[0].password, (err, result) => {
+      if (result) {
+
+        const token = jwt.sign({
+
+          user: user[0].username,
+          role: user[0].role
+        }, "very strong password", { expiresIn: "365d" });
+
+        res.send(token)
+      }
+      else {
+        res.send("wrong password")
+      }
+
+    })
+  } else {
+
+    res.send("user not found")
+
+  }
+});
+
+//logout
+app.post('/logout', verifyToken, (req, res) => {
+
+  const { username } = req.body;
+  console.log(username);
+
+  res.send("See You Next Time")
+})
 
 // start the server
 app.listen(port, () => {
