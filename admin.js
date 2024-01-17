@@ -49,13 +49,17 @@ app.post('/student',(req,res)=> {
   res.send("student added")
 });
 
-app.get('/student', async (req, res) => {
-  try {
-    const students = await students.find();
-    res.json(students);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
+//find student
+app.post('/student',(req,res)=> {
+  const{name,matrixNo}=req.body;
+  console.log(name,matrixNo);
+
+  const hash = bcrypt.hashSync(matrixNo,15);
+
+  client.db("BENR2423").collection("student").findOne({"name":name,"matrixNo":hash});
+  console.log(hash);
+
+  res.send("student added")
 });
 
 
