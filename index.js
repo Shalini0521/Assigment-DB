@@ -66,7 +66,7 @@ function verifyToken(req, res, next) {
         return res.status(401).send('Invalid or incomplete token');
       }
 
-      if (decoded.role !== 'admin') {
+      if (decoded.role !== 'student') {
         return res.status(401).send('Invalid role');
       }
 
