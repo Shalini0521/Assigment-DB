@@ -1,38 +1,46 @@
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const port = process.env.PORT || 3000;
+const attendance = require ('./attendance.js')
+
+// Add this middleware to parse JSON in the request body
+app.use(express.json());
 
 app.post('/attendance', async (req, res) => {
   const { matrix, date, subject, section } = req.body;
   try {
+    // Assuming attendanceModule is defined somewhere
     attendanceModule.recordAttendance(matrix, date, subject, section);
     res.status(201).send("Attendance Submitted");
   } catch (error) {
     console.log(error);
-    res.status(500).send(Error, { error });
+    res.status(500).send("Error", { error });
   }
 });
 
-  async function recordAttendance(matrix, date, subject, section) {
-    try {
-      const database = client.db('BENR2423');
-      const collection = database.collection('attendance');
+async function recordAttendance(matrix, date, subject, section) {
+  try {
+    const database = client.db('BENR2423');
+    const collection = database.collection('attendance');
 
-      const user = {
-        "matrix": matrix,
-        "date": date,
-        "subject": subject,
-        "section": section,
-      };
+    const user = {
+      "matrix": matrix,
+      "date": date,
+      "subject": subject,
+      "section": section,
+    };
 
-      await collection.insertOne(user);
-      console.log("Attendance Submitted Successfully");
-    }
-    catch (error) {
-      console.log("Attendance already exists")
-    }
+    await collection.insertOne(user);
+    console.log("Attendance Submitted Successfully");
+  } catch (error) {
+    console.log("Attendance already exists");
   }
+}
+
+module.exports = {
+  attendance
+}
 
 app.listen(port, () => {
-  console.log('Example app listening on port ${port}')
-})
+  console.log(`Example app listening on port ${port}`);
+});

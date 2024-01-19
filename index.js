@@ -83,12 +83,12 @@ app.use(express.json())
 
 //register
 app.post('/register',(req,res)=> {
-  const{username,password}=req.body;
+  const{username,password,role}=req.body;
   console.log(username,password);
 
-  const hash = bcrypt.hashSync(password,6);
+  const hash = bcrypt.hashSync(password,10);
 
-  client.db("BENR2423").collection("users").insertOne({"username":username,"password":hash});
+  client.db("BENR2423").collection("users").insertOne({"username":username,"password":hash,"role":req.body.role});
   console.log(hash);
 
   res.send("register success")
@@ -108,6 +108,7 @@ app.post('/login', async (req, res) => {
     bcrypt.compare(password, user[0].password, (err, result) => {
       if (result) {
 
+    
         const token = jwt.sign({
 
           user: user[0].username,
