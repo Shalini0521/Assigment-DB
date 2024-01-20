@@ -62,16 +62,18 @@ function verifyToken(req, res, next) {
 
       console.log('Decoded token:', decoded);
 
+
       if (!decoded || !decoded.role) { // Check for missing properties
         return res.status(401).send('Invalid or incomplete token');
       }
 
-      if (decoded.role !== 'student') {
+      if (decoded.role !== 'lecturer' && decoded.role !== 'student' && decoded.role !== 'admin') {
         return res.status(401).send('Invalid role');
       }
 
       next();
     });
+    
   } catch (error) {
     console.error('Unexpected error:', error);
     res.status(500).send('Internal server error');
