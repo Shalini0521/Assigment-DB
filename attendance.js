@@ -6,10 +6,26 @@ const attendance = require ('./attendance.js')
 // Add this middleware to parse JSON in the request body
 app.use(express.json());
 
-app.post('/attendance', async (req, res) => {
-  const { matrix, date, subject, section } = req.body;
+//MongoDB collection URL
 
-  client.db("BENR2423").collection("attendance").find({"matrix":{$eq:req.body.matrix },
+const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://b022210058:tAGrofj9DyRYHqeo@cluster0.95rvnk9.mongodb.net/?retryWrites=true&w=majority";
+
+// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  }
+});
+
+
+app.post('/attendance', async (req, res) => {
+  const { matrix, date, subject, code, section } = req.body;
+
+  client.db("BENR2423").collection("attendance").find({
+    "matrix":{$eq:req.body.matrix },
   
 }).toArray().then((result) =>{
   console.log(result)
@@ -22,7 +38,7 @@ app.post('/attendance', async (req, res) => {
   else {
     client.db("BENR2423").collection("attendance").insertone(
       {
-        "matrix": req.body.matrix,
+           "matrix": req.body.matrix,
         "date": req.body.date,
         "subject": req.body.subject,
         "code": req.body.code,
@@ -36,6 +52,7 @@ app.post('/attendance', async (req, res) => {
  } )  
    
 });
+
 
 function StudentToken(req,res,next) {
   let header = req.headers.authorization;
