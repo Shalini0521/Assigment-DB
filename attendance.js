@@ -8,38 +8,34 @@ app.use(express.json());
 
 app.post('/attendance', async (req, res) => {
   const { matrix, date, subject, section } = req.body;
-  try {
-    // Assuming attendanceModule is defined somewhere
-    attendanceModule.recordAttendance(matrix, date, subject, section);
-    res.status(201).send("Attendance Submitted");
-  } catch (error) {
-    console.log(error);
-    res.status(500).send("Error", { error });
+
+  client.db("BENR2423").collection("attendance").find({"matrix":{$eq:req.body.matrix },
+  
+}).toArray().then((result) =>{
+  console.log(result)
+
+  if(result.length>0) {
+
+    res.status(400).send ("Matrix already exists")
+
   }
-});
+  else {
+    client.db("BENR2423").collection("attendance").insertone(
+      {
+        "matrix": req.body.matrix,
+        "date": req.body.date,
+        "subject": req.body.subject,
+        "code": req.body.code,
+        "section": req.body.section
 
-async function recordAttendance(matrix, date, subject, section) {
-  try {
-    const database = client.db('BENR2423');
-    const collection = database.collection('attendance');
+      })
 
-    const user = {
-      "matrix": matrix,
-      "date": date,
-      "subject": subject,
-      "section": section,
-    };
-
-    await collection.insertOne(user);
-    console.log("Attendance Submitted Successfully");
-  } catch (error) {
-    console.log("Attendance already exists");
-  }
-}
-
-module.exports = {
-  attendance
-}
+       res.send('Attendance Submit successfully')
+     
+   }
+ } )  
+   
+})
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
