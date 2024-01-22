@@ -35,7 +35,45 @@ app.post('/attendance', async (req, res) => {
    }
  } )  
    
-})
+});
+
+function StudentToken(req,res,next) {
+  let header = req.headers.authorization;
+
+  if(!header) {
+    return res.status(401).send('Unauthorized request');
+  }
+
+  let tokens = header.split('')[1];//Ensure correct space-based split
+
+  try{
+    //log token for inspection
+    console.log('Received token:',tokens);
+
+    jwt.verify(tokens, 'very strong password', async(err,decoded) => {
+      if(err){
+        console.error('Error verifying token:',err);
+        return res.status(401).send('invalid token');
+      }
+
+      console.log('Decoded token:',decoded);
+
+      if(!decoded||!decoded.role){//check for missing properties
+       return res.status(401).send('invalid or incomplete token');
+      }
+
+      if (decoded.role!=='student'){
+        return res.status(401).send('invalid role');
+      }
+
+      next();
+    })
+  }catch(error){
+    console.error('Unexpected error:',error);
+    res.status(500).send('Internal server error');
+  }
+  }
+
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
