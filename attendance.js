@@ -36,7 +36,7 @@ app.post('/attendance', async (req, res) => {
 
   }
   else {
-    client.db("BENR2423").collection("attendance").insertone(
+    client.db("BENR2423").collection("attendance").insertOne(
       {
            "matrix": req.body.matrix,
         "date": req.body.date,
