@@ -146,12 +146,12 @@ app.post('/login', async (req, res) => {
 });
 
 //logout
-app.post('/logout', verifyToken, (req, res) => {
+app.post('/logout', (req, res) => {
 
-  const { username } = req.body;
-  console.log(username);
+  console.log('logout', req.body);
 
-  res.send("See You Next Time")
+res.send("See You Next Time")
+
 })
 
 // start the server
