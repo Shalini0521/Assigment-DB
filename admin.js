@@ -2,7 +2,7 @@ const { request } = require("express");
 
 const express = require('express')
 const app = express()
-const port = process.env.PORT ||3001;
+const port = process.env.PORT ||3000;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
@@ -37,20 +37,41 @@ async function run() {
 run().catch(console.dir);
 
 //add student
-app.post('/student',(req,res)=> {
-  const{name,matrixNo}=req.body;
-  console.log(name,matrixNo);
+app.post('/student', async (req, res) => {
+  const { matrix, name, year,semester, program, section } = req.body;
 
-  const hash = bcrypt.hashSync(matrixNo,15);
+  client.db("BENR2423").collection("student").find({
+    "matrix":{$eq:req.body.matrix },
+  
+}).toArray().then((result) =>{
+  console.log(result)
 
-  client.db("BENR2423").collection("student").insertOne({"name":name,"matrixNo":hash});
-  console.log(hash);
+  if(result.length>0) {
 
-  res.send("student added")
+    res.status(400).send ("Student already exist")
+
+  }
+  else {
+    client.db("BENR2423").collection("student").insertOne(
+      {
+        "matrix": req.body.matrix,
+        "name": req.body.name,
+        "year": req.body.year,
+        "semester": req.body.semester,
+        "program": req.body.program,
+        "section": req.body.section
+
+      })
+
+       res.send('Student added successfully')
+     
+   }
+ } )  
+   
 });
 
 //find student
-app.post('/student',(req,res)=> {
+app.get('/student',(req,res)=> {
   const{name,matrixNo}=req.body;
   console.log(name,matrixNo);
 
@@ -59,7 +80,7 @@ app.post('/student',(req,res)=> {
   client.db("BENR2423").collection("student").findOne({"name":name,"matrixNo":hash});
   console.log(hash);
 
-  res.send("student added")
+  res.send("student found")
 });
 
 
