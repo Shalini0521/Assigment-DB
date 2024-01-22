@@ -5,8 +5,7 @@ const app = express()
 const port = process.env.PORT ||3000;
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-
-app.use(express.json())
+app.use(express.json());
 
 //MongoDB collection URL
 
@@ -70,18 +69,26 @@ app.post('/student', async (req, res) => {
    
 });
 
-//find student
-app.get('/student',(req,res)=> {
-  const{name,matrixNo}=req.body;
-  console.log(name,matrixNo);
+app.post('/findStudent', async (req, res) => {
+  const { matrix } = req.body;
 
-  const hash = bcrypt.hashSync(matrixNo,15);
-
-  client.db("BENR2423").collection("student").findOne({"name":name,"matrixNo":hash});
-  console.log(hash);
-
-  res.send("student found")
+  client.db("BENR2423").collection("student").findOne({
+    "matrix": matrix
+  }, (err, result) => {
+    if (err) {
+      console.error('Error:', err);
+      res.status(500).send("Internal Server Error");
+    } else {
+      if (result) {
+        console.log(result);
+        res.json({ success: true, student: result });
+      } else {
+        res.status(404).json({ success: false, message: 'Student not found' });
+      }
+    }
+  });
 });
+
 
 
 // start the server
