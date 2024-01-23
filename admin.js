@@ -69,25 +69,49 @@ app.post('/student', async (req, res) => {
    
 });
 
-app.post('/findStudent', async (req, res) => {
-  const { matrix } = req.body;
+app.post('/findstudent', async (req, res) => {
+  const { matrix} = req.body;
 
-  client.db("BENR2423").collection("student").findOne({
-    "matrix": matrix
-  }, (err, result) => {
-    if (err) {
-      console.error('Error:', err);
-      res.status(500).send("Internal Server Error");
-    } else {
-      if (result) {
-        console.log(result);
-        res.json({ success: true, student: result });
-      } else {
-        res.status(404).json({ success: false, message: 'Student not found' });
-      }
-    }
-  });
+  client.db("BENR2423").collection("student").find({
+    "matrix":{$eq:req.body.matrix },
+  
+}).toArray().then((result) =>{
+  console.log(result)
+
+  if(result.length>0) {
+
+    console.log('Found student:', result);
+    res.json({ success: true, student: result });
+
+  }
+  else {
+    console.log('Student not found');
+    res.status(404).json({ success: false, message: 'Student not found' });
+     
+   }
+ } )  
+   
 });
+
+app.get('/viewAllStudents', async (req, res) => {
+  try {
+    const allStudents = await client.db("BENR2423").collection("student").find().toArray();
+
+    if (allStudents.length > 0) {
+      console.log('Found all students:', allStudents);
+      res.json({ success: true, students: allStudents });
+    } else {
+      console.log('No students found');
+      res.status(404).json({ success: false, message: 'No students found' });
+    }
+  } catch (error) {
+    console.error('Error:', error.message);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+
+
 
 
 
