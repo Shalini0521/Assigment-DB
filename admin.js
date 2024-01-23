@@ -69,6 +69,7 @@ app.post('/student', async (req, res) => {
    
 });
 
+//find and view one student
 app.post('/findstudent', async (req, res) => {
   const { matrix} = req.body;
 
@@ -93,6 +94,8 @@ app.post('/findstudent', async (req, res) => {
    
 });
 
+
+//view all students list
 app.get('/viewAllStudents', async (req, res) => {
   try {
     const allStudents = await client.db("BENR2423").collection("student").find().toArray();
