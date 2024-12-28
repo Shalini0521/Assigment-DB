@@ -137,25 +137,25 @@ app.post('/login', async (req, res) => {
 });
 
 //Staff Add Subject
-app.post('/AddSubject', staffToken, async (req, res) => {
+app.post('/AddSubject', async (req, res) => {
     console.log(req.body);
     staff.AddSubject(req, res);
   })
 
 //Staff View Attendance List
-app.post('/AttendanceList', staffToken, async (req, res) => {
+app.post('/AttendanceList', async (req, res) => {
     console.log(req.body);
     staff.AttendanceList(req, res);
 })
 
 //Student Record Attendance
-app.post('/RecordAttendance', staffToken, async (req, res) => {
+app.post('/RecordAttendance', async (req, res) => {
     console.log(req.body);
     student.RecordAttendance(req, res);
 })
 
 //Student View Attendance
-app.post('/viewAttendance', staffToken, async (req, res) => {
+app.post('/viewAttendance', async (req, res) => {
     console.log(req.body);
     student.viewAttendance(req, res);
 })
