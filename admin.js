@@ -70,9 +70,44 @@ exports.AddStudent = function (req, res) {
    
 }
 
+//add lecturer
+//app.post('/student', async (req, res) => 
+  exports.AddLecturer = function (req, res) {
+    const { matrix, name, year,semester, program, section } = req.body;
+  
+    client.db("BENR2423").collection("student").find({
+      "matrix":{$eq:req.body.matrix },
+    
+  }).toArray().then((result) =>{
+    console.log(result)
+  
+    if(result.length>0) {
+  
+      res.status(400).send ("Student already exist")
+  
+    }
+    else {
+      client.db("BENR2423").collection("student").insertOne(
+        {
+          "matrix": req.body.matrix,
+          "name": req.body.name,
+          "year": req.body.year,
+          "semester": req.body.semester,
+          "program": req.body.program,
+          "section": req.body.section
+  
+        })
+  
+         res.send('Student added successfully')
+       
+     }
+   } )  
+     
+  }
+
 //find and view one student
 //app.post('/findstudent', async (req, res) => 
-  exports.findstudent = function (req, res) {
+exports.findstudent = function (req, res) {
   const { matrix} = req.body;
 
   client.db("BENR2423").collection("student").find({
@@ -95,7 +130,6 @@ exports.AddStudent = function (req, res) {
  } )  
    
 }
-
 
 //view all students list
 //app.get('/viewAllStudents', async (req, res) => 

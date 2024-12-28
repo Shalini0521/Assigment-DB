@@ -54,23 +54,14 @@ exports.RecordAttendance = function (req, res) {
 
 exports.viewAttendance = function (req, res) {
     client.db("Assignment").collection("Attendance").find({
-      "Matrix":{$eq:req.body.Matrix },
-    
-  }).toArray().then((result) =>{
-    console.log(result)
-  
-    if(result.length>0) {
-  
-      console.log('Found Attendance:', result);
-      res.json({ success: true, student: result });
-  
+        "Matrix": { $eq: req.body.Matrix }
+      }).toArray().then((result) => {
+        if (result.length > 0) {
+          res.status(200).json(result);
+          res.status(400).send('View Successful')
+        } else {
+          res.send('No attendance record found');
+        }
+      })
     }
-    else {
-      console.log('Attendance not found');
-      res.status(404).json({ success: false, message: 'Student not found' });
-       
-     }
-   } )  
-     
-  }
   

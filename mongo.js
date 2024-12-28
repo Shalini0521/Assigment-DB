@@ -4,7 +4,7 @@ const port = process.env.PORT || 3000;
 const bcrypt = require('bcrypt');
 const staff = require("./staff.js");
 const student = require("./student.js");
-
+const administrator = require("./administrator.js");
 var jwt = require('jsonwebtoken');
 
 app.use(express.json());
@@ -161,6 +161,30 @@ app.post('/RecordAttendance', async (req, res) => {
 app.post('/viewAttendance', async (req, res) => {
     console.log(req.body);
     student.viewAttendance(req, res);
+})
+
+//Administrator Add Student
+app.post('/AddStudent', async (req, res) => {
+    console.log(req.body);
+    administrator.AddStudent(req, res);
+})
+
+//Administrator Add Staff
+app.post('/AddStaff', async (req, res) => {
+    console.log(req.body);
+    administrator.AddStaff(req, res);
+})
+
+//Administrator Add Program
+app.post('/AddProgram', async (req, res) => {
+    console.log(req.body);
+    administrator.AddProgram(req, res);
+})
+
+//Administrator View Student List
+app.post('/viewStudentList', async (req, res) => {
+    console.log(req.body);
+    administrator.viewStudentList(req, res);
 })
 
 //logout
