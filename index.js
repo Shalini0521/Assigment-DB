@@ -60,7 +60,7 @@ function verifyToken(req, res, next) {
         return res.status(401).send('Invalid or incomplete token');
       }
 
-      if (decoded.role !== 'staff' && decoded.role !== 'student' && decoded.role !== 'admin') {
+      if (decoded.role !== 'Staff' && decoded.role !== 'Student' && decoded.role !== 'Admin') {
         return res.status(401).send('Invalid role');
       }
 
@@ -140,52 +140,116 @@ app.post('/login', async (req, res) => {
 });
 
 //Staff Add Subject
-app.post('/AddSubject', async (req, res) => {
+app.post('/AddSubject', verifyToken, async (req, res) => {
+    if (req.user.role !== 'Staff') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+    }
     console.log(req.body);
     staff.AddSubject(req, res);
-  })
+});
+
+/*app.post('/AddSubject', async (req, res) => {
+    console.log(req.body);
+    staff.AddSubject(req, res);
+})*/
 
 //Staff View Attendance List
-app.post('/AttendanceList', async (req, res) => {
+app.post('/AttendanceList', verifyToken, async (req, res) => {
+    if (req.user.role !== 'Staff') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+    }
     console.log(req.body);
     staff.AttendanceList(req, res);
 })
 
+/*app.post('/AttendanceList', async (req, res) => {
+    console.log(req.body);
+    staff.AttendanceList(req, res);
+})*/
+
 //Student Record Attendance
-app.post('/RecordAttendance', async (req, res) => {
+app.post('/RecordAttendance', verifyToken, async (req, res) => {
+    if (req.user.role !== 'Student') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+    }
     console.log(req.body);
     student.RecordAttendance(req, res);
 })
 
+/*app.post('/RecordAttendance', async (req, res) => {
+    console.log(req.body);
+    student.RecordAttendance(req, res);
+})*/
+
 //Student View Attendance
-app.post('/viewAttendance', async (req, res) => {
+app.post('/viewAttendance', verifyToken, async (req, res) => {
+    if (req.user.role !== 'Student') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+    }
     console.log(req.body);
     student.viewAttendance(req, res);
 })
 
+/*app.post('/viewAttendance', async (req, res) => {
+    console.log(req.body);
+    student.viewAttendance(req, res);
+})*/
+
 //Administrator Add Student
-app.post('/AddStudent', async (req, res) => {
+app.post('/AddStudent', verifyToken, async (req, res) => {
+    if (req.user.role !== 'Admin') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+    }
     console.log(req.body);
     administrator.AddStudent(req, res);
 })
 
+/*app.post('/AddStudent', async (req, res) => {
+    console.log(req.body);
+    administrator.AddStudent(req, res);
+})*/
+
 //Administrator Add Staff
-app.post('/AddStaff', async (req, res) => {
+app.post('/AddStaff', verifyToken, async (req, res) => {
+    if (req.user.role !== 'Admin') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+    }
     console.log(req.body);
     administrator.AddStaff(req, res);
 })
 
+/*app.post('/AddStaff', async (req, res) => {
+    console.log(req.body);
+    administrator.AddStaff(req, res);
+})*/
+
 //Administrator Add Program
-app.post('/AddProgram', async (req, res) => {
+app.post('/AddProgram', verifyToken, async (req, res) => {
+    if (req.user.role !== 'Admin') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+    }
     console.log(req.body);
     administrator.AddProgram(req, res);
 })
 
+/*app.post('/AddProgram', async (req, res) => {
+    console.log(req.body);
+    administrator.AddProgram(req, res);
+})*/
+
 //Administrator View Student List
-app.post('/viewStudentList', async (req, res) => {
+app.post('/viewStudentList', verifyToken, async (req, res) => {
+    if (req.user.role !== 'Admin') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+    }
     console.log(req.body);
     administrator.viewStudentList(req, res);
 })
+
+/*app.post('/viewStudentList', async (req, res) => {
+    console.log(req.body);
+    administrator.viewStudentList(req, res);
+})*/
 
 //logout
 app.post('/logout', (req, res) => {
