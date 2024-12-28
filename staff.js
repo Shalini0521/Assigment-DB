@@ -48,8 +48,8 @@ exports.AddSubject = function (req, res) {
     else {
       client.db("Assignment").collection("Subject").insertOne(
         {
-          "Code": req.body.Code,
-          "Name": req.body.Name
+          "Code": Code,
+          "Name": Name
         })
   
          res.send('Subject added successfully')

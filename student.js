@@ -53,8 +53,6 @@ exports.RecordAttendance = function (req, res) {
 }
 
 exports.viewAttendance = function (req, res) {
-    const {matrix} = req.body;
-  
     client.db("Assignment").collection("Attendance").find({
       "Matrix":{$eq:req.body.Matrix },
     

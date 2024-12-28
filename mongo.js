@@ -2,6 +2,9 @@ const express = require('express');
 const app = express();
 const port = process.env.PORT || 3000;
 const bcrypt = require('bcrypt');
+const staff = require("./staff.js");
+const student = require("./student.js");
+
 var jwt = require('jsonwebtoken');
 
 app.use(express.json());
