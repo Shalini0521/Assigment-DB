@@ -1,73 +1,38 @@
-console.log("Hello, world!");const { request } = require("express");
-
-const express = require('express')
-const app = express()
+const express = require('express');
+const app = express();
 const port = process.env.PORT || 3000;
 const bcrypt = require('bcrypt');
+const staff = require("./staff.js");
+const student = require("./student.js");
+const administrator = require("./administrator.js");
 var jwt = require('jsonwebtoken');
 
-app.use(express.json())
+app.use(express.json());
 
-//MongoDB collection URL
 const { MongoClient, ServerApiVersion } = require('mongodb');
 const uri = "mongodb+srv://Azie:Azie1234@azie.33okh.mongodb.net/?retryWrites=true&w=majority&appName=Azie";
 
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
     strict: true,
     deprecationErrors: true,
-  }
+  },
 });
 
-async function run() {
+// Connect to MongoDB and keep the connection open
+async function connectToMongoDB() {
   try {
-    // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    await client.close();
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1); // Exit the app if MongoDB connection fails
   }
 }
-run().catch(console.dir);
 
-
-/*const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://b022210058:tAGrofj9DyRYHqeo@cluster0.95rvnk9.mongodb.net/?retryWrites=true&w=majority";
-const options = {
-    ssl: true,  // Ensure SSL is enabled
-    tls: true,  // Force TLS
-  };
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  }
-});
-
-async function run() {
-  try {
-    // Connect the client to the server	(optional starting in v4.7)
-    await client.connect();
-    // Send a ping to confirm a successful connection
-    await client.db("admin").command({ ping: 1 });
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } finally {
-    // Ensures that the client will close when you finish/error
-    //await client.close();
-  }
-}
-run().catch(console.dir);*/
-
-//app.get('/attendance', (req, res) => {
-// res.send(attendance)
-//});
+// Ensure the database connection is established before the server starts
+connectToMongoDB();
 
 function verifyToken(req, res, next) {
   let header = req.headers.authorization;
@@ -95,7 +60,7 @@ function verifyToken(req, res, next) {
         return res.status(401).send('Invalid or incomplete token');
       }
 
-      if (decoded.role !== 'lecturer' && decoded.role !== 'student' && decoded.role !== 'admin') {
+      if (decoded.role !== 'staff' && decoded.role !== 'student' && decoded.role !== 'admin') {
         return res.status(401).send('Invalid role');
       }
 
@@ -108,34 +73,35 @@ function verifyToken(req, res, next) {
   }
 }
 
+// Register endpoint
+app.post('/register', async (req, res) => {
+  const { username, password, role } = req.body;
 
-app.use(express.json())
+  try {
+    const hash = bcrypt.hashSync(password, 10);
 
-//register
-app.post('/register',(req,res)=> {
-  const{username,password,role}=req.body;
-  console.log(username,password);
+    const db = client.db("Assignment");
+    const usersCollection = db.collection("Users");
 
-  const hash = bcrypt.hashSync(password,10);
+    // Check if username already exists
+    const existingUser = await usersCollection.findOne({ username: req.body.username });
 
-  client.db("BENR2423").collection("users").find({
-    "username":{$eq:req.body.username }
-
-  }).toArray().then((result) =>{
-    console.log(result)
-
-    if(result.length>0) {
-
-      res.status(400).send ("Username already exists")
+    if (existingUser) {
+      return res.status(400).send("Username already exists");
     }
-    else {
-      client.db("BENR2423").collection("users").insertOne({"username":req.body.username,"password":hash,"role":req.body.role});
 
-      res.send("register successfully")
+    // Insert the new user
+    await usersCollection.insertOne({
+      username: req.body.username,
+      password: hash,
+      role: req.body.role,
+    });
+
+    res.send("Register successfully");
+  } catch (error) {
+    console.error("Error during registration:", error);
+    res.status(500).send("An error occurred during registration");
   }
-
-} )
-  
 });
 
 //login
@@ -145,7 +111,7 @@ app.post('/login', async (req, res) => {
 
   console.log(username, password);
 
-  const user = await client.db("BENR2423").collection("users").find({ "username": username }).toArray();
+  const user = await client.db("Assignment").collection("Users").find({ "username": username }).toArray();
   console.log(user);
 
   if (user) {
@@ -173,6 +139,54 @@ app.post('/login', async (req, res) => {
   }
 });
 
+//Staff Add Subject
+app.post('/AddSubject', async (req, res) => {
+    console.log(req.body);
+    staff.AddSubject(req, res);
+  })
+
+//Staff View Attendance List
+app.post('/AttendanceList', async (req, res) => {
+    console.log(req.body);
+    staff.AttendanceList(req, res);
+})
+
+//Student Record Attendance
+app.post('/RecordAttendance', async (req, res) => {
+    console.log(req.body);
+    student.RecordAttendance(req, res);
+})
+
+//Student View Attendance
+app.post('/viewAttendance', async (req, res) => {
+    console.log(req.body);
+    student.viewAttendance(req, res);
+})
+
+//Administrator Add Student
+app.post('/AddStudent', async (req, res) => {
+    console.log(req.body);
+    administrator.AddStudent(req, res);
+})
+
+//Administrator Add Staff
+app.post('/AddStaff', async (req, res) => {
+    console.log(req.body);
+    administrator.AddStaff(req, res);
+})
+
+//Administrator Add Program
+app.post('/AddProgram', async (req, res) => {
+    console.log(req.body);
+    administrator.AddProgram(req, res);
+})
+
+//Administrator View Student List
+app.post('/viewStudentList', async (req, res) => {
+    console.log(req.body);
+    administrator.viewStudentList(req, res);
+})
+
 //logout
 app.post('/logout', (req, res) => {
 
@@ -182,7 +196,14 @@ res.send("See You Next Time")
 
 })
 
-// start the server
+// Start the server
 app.listen(port, () => {
-    console.log('Example app listening on port 3000')
-})
+  console.log(`Example app listening on port ${port}`);
+});
+
+// Handle graceful shutdown
+process.on("SIGINT", async () => {
+  console.log("Closing MongoDB connection...");
+  await client.close();
+  process.exit(0);
+});

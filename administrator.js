@@ -87,7 +87,7 @@ exports.AddStudent = function (req, res) {
   }
 
   exports.AddProgram = function (req, res) {
-    const { Name, Code, Program } = req.body;
+    const { Name, Code } = req.body;
   
     client.db("Assignment").collection("Program").find({
       "Code":{$eq:req.body.Code },
@@ -104,8 +104,7 @@ exports.AddStudent = function (req, res) {
       client.db("Assignment").collection("Program").insertOne(
         {
             "Name": Name,
-            "Code": Code,
-            "Program": Program
+            "Code": Code
         })
   
          res.send('Program added successfully')
