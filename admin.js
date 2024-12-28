@@ -36,7 +36,8 @@ async function run() {
 run().catch(console.dir);
 
 //add student
-app.post('/student', async (req, res) => {
+//app.post('/student', async (req, res) => 
+exports.AddStudent = function (req, res) {
   const { matrix, name, year,semester, program, section } = req.body;
 
   client.db("BENR2423").collection("student").find({
@@ -67,10 +68,11 @@ app.post('/student', async (req, res) => {
    }
  } )  
    
-});
+}
 
 //find and view one student
-app.post('/findstudent', async (req, res) => {
+//app.post('/findstudent', async (req, res) => 
+  exports.findstudent = function (req, res) {
   const { matrix} = req.body;
 
   client.db("BENR2423").collection("student").find({
@@ -92,13 +94,14 @@ app.post('/findstudent', async (req, res) => {
    }
  } )  
    
-});
+}
 
 
 //view all students list
-app.get('/viewAllStudents', async (req, res) => {
+//app.get('/viewAllStudents', async (req, res) => 
+exports.viewAllStudents = function (req, res) {
   try {
-    const allStudents = await client.db("BENR2423").collection("student").find().toArray();
+    const allStudents = client.db("BENR2423").collection("student").find().toArray();
 
     if (allStudents.length > 0) {
       console.log('Found all students:', allStudents);
@@ -111,14 +114,4 @@ app.get('/viewAllStudents', async (req, res) => {
     console.error('Error:', error.message);
     res.status(500).json({ success: false, message: 'Internal Server Error' });
   }
-});
-
-
-
-
-
-
-// start the server
-app.listen(port, () => {
-    console.log('Example app listening on port ${port}')
-})
+}

@@ -31,48 +31,42 @@ async function connectToMongoDB() {
 // Ensure the database connection is established before the server starts
 connectToMongoDB();
 
-exports.RecordAttendance = function (req, res) {
-    const { username, Matrix, Subject, Program, Date, Time } = req.body;
-    client.db("Assignment").collection("Attendance").insertOne(
-        {
-            "username": username,
-            "Matrix": Matrix,
-            "Subject": Subject,
-            "Program": Program,
-            "Date": Date,
-            "Time": Time,
-            "Status": 'Present'
-        }).then((result) => {
-        console.log(req.body);
-        res.send('Attendance recorded successfully');
-        })
-        .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error recording attendance');
-    })
-}
-
-exports.viewAttendance = function (req, res) {
-    const {matrix} = req.body;
+exports.AddSubject = function (req, res) {
+    const { Code, Name } = req.body;
   
-    client.db("Assignment").collection("Attendance").find({
-      "Matrix":{$eq:req.body.Matrix },
+    client.db("Assignment").collection("Subject").find({
+      "Code":{$eq:req.body.Code },
     
   }).toArray().then((result) =>{
     console.log(result)
   
     if(result.length>0) {
   
-      console.log('Found Attendance:', result);
-      res.json({ success: true, student: result });
+      res.status(400).send ("Subject already exist")
   
     }
     else {
-      console.log('Attendance not found');
-      res.status(404).json({ success: false, message: 'Student not found' });
+      client.db("Assignment").collection("Subject").insertOne(
+        {
+          "Code": req.body.Code,
+          "Name": req.body.Name
+        })
+  
+         res.send('Subject added successfully')
        
      }
    } )  
-     
   }
-  
+
+  exports.AttendanceList = function (req, res) {
+    client.db("Assignment").collection("Attendance").find({
+      "Subject": { $eq: req.body.Subject }
+    }).toArray().then((result) => {
+      if (result.length > 0) {
+        res.status(200).json(result);
+        res.status(400).send('View Successful')
+      } else {
+        res.send('No record')
+      }
+    })
+  }
