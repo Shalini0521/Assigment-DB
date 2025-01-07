@@ -204,6 +204,7 @@ app.post('/register', async (req, res) => {
         if (result) {
 
           const token = jwt.sign({
+          
             user: user.username,
             role: user.role
           }, 'Assignment', { expiresIn: '20h' });
@@ -241,7 +242,8 @@ app.post('/login', async (req, res) => {
     const currentTime = Date.now();
 
     if (attempts.lockUntil > currentTime) {
-      return res.status(429).send('Account locked. Try again later.');
+      return res.status(429).send('Account locked. Try again later.');clear
+
     }
 
     // Find user in the database
