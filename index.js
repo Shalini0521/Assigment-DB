@@ -421,20 +421,21 @@ const invalidatedTokens = new Set(); // In-memory storage for invalidated tokens
 app.post('/logout', (req, res) => {
   const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
 
-  jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
-    // Add the token to invalidation list
-    invalidatedTokens.add(token);
-    console.log(`User ${decoded.userId} logged out at ${new Date().toISOString()}`);
-    res.status(200).json({ message: "You have been successfully logged out." });
-  });
+  // jwt.verify(token, process.env.JWT_SECRET, (decoded) => {
+  //   // Add the token to invalidation list
+  //   invalidatedTokens.add(token);
+  //   console.log(`User ${decoded.userId} logged out at ${new Date().toISOString()}`);
+  //   res.status(200).json({ message: "You have been successfully logged out." });
+  // });
   
-  // if (token) {
-  //   invalidatedTokens.add(token); // Add token to invalidation list
+   if (token) {
+     invalidatedTokens.add(token); // Add token to invalidation list
   //   console.log("Token invalidated:", token); // Log the token being invalidated
-  //   res.status(200).send("You have been successfully logged out."); // Send a simple success response
-  // } else {
-  //   res.status(400).send("No token provided."); // Send an error response if no token is provided
-  // }
+     console.log(`User ${decoded.userId} logged out at ${new Date().toISOString()}`);
+     res.status(200).send("You have been successfully logged out."); // Send a simple success response
+   } else {
+     res.status(400).send("No token provided."); // Send an error response if no token is provided
+   }
 });
 
 
