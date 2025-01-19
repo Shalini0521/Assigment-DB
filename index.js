@@ -204,7 +204,7 @@ app.post('/register', async (req, res) => {
         if (result) {
 
           const token = jwt.sign({
-          
+
             user: user.username,
             role: user.role
           }, 'Assignment', { expiresIn: '20h' });
@@ -269,7 +269,7 @@ app.post('/login', async (req, res) => {
     // Generate JWT
     const token = jwt.sign(
       { user: user.username, role: user.role },
-      process.env.JWT_SECRET || 'defaultSecret', // Use environment variable for secret
+      process.env.JWT_SECRET || 'Assignment', // Use environment variable for secret
       { expiresIn: '20h' }
     );
 
@@ -442,12 +442,13 @@ function StudentToken(req, res, next) {
   jwt.verify(token, "Assignment", function (err, decoded) {
     console.log(err)
     if (err) {
+      res.send("Invalid Token");
       return res.sendStatus(401).send('Unauthorized');
     }
     else {
       console.log(decoded);
       if (decoded.role != 'Student') {
-        return res.status(401).send('Again Unauthorized');
+        return res.status(401).send('Unauthorized');
       }
     }
     next();
