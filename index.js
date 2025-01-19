@@ -440,6 +440,7 @@ app.post('/logout', (req, res) => {
     console.log(`User ${decoded.userId} logged out at ${new Date().toISOString()}`);
     res.status(200).json({ message: "You have been successfully logged out." });
   });
+});
 
 // Start the server
 app.listen(port, () => {
