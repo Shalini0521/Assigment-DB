@@ -416,7 +416,6 @@ res.send("See You Next Time")
 
 })*/
 
-const jwt = require('jsonwebtoken'); // Library to handle JWT tokens
 const invalidatedTokens = new Set(); // In-memory storage for invalidated tokens (use a persistent store in production)
 
 // Secure Logout Endpoint
