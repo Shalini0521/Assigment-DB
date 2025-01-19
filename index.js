@@ -436,19 +436,19 @@ function StudentToken(req, res, next) {
   let header = req.headers.authorization;
 
   if (!header) {
-    return res.sendStatus(401).send('Unauthorized');
+    return res.sendStatus(401).send('PUnauthorized');
   }
   const token = req.headers.authorization.split(' ')[1];
   jwt.verify(token, "Assignment", function (err, decoded) {
     console.log(err)
     if (err) {
       res.send("Invalid Token");
-      return res.sendStatus(401).send('Unauthorized');
+      return res.sendStatus(401).send('MUnauthorized');
     }
     else {
       console.log(decoded);
       if (decoded.role != 'Student') {
-        return res.status(401).send('Unauthorized');
+        return res.status(401).send('NUnauthorized');
       }
     }
     next();
