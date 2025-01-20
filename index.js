@@ -34,6 +34,31 @@ async function connectToMongoDB() {
 // Ensure the database connection is established before the server starts
 connectToMongoDB();
 
+/*const { MongoClient, ServerApiVersion } = require('mongodb');
+const uri = "mongodb+srv://Azie:<db_password>@azie.33okh.mongodb.net/?retryWrites=true&w=majority&appName=Azie";
+
+const client = new MongoClient(uri, {
+  serverApi: {
+    version: ServerApiVersion.v1,
+    strict: true,
+    deprecationErrors: true,
+  },
+});
+
+// Connect to MongoDB and keep the connection open
+async function connectToMongoDB() {
+  try {
+    await client.connect();
+    console.log("Pinged your deployment. You successfully connected to MongoDB!");
+  } catch (error) {
+    console.error("Failed to connect to MongoDB:", error);
+    process.exit(1); // Exit the app if MongoDB connection fails
+  }
+}
+
+// Ensure the database connection is established before the server starts
+connectToMongoDB();
+
 app.post('/register', async (req, res) => {
   try {
     const { username, password, role } = req.body;
