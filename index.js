@@ -57,7 +57,7 @@ async function connectToMongoDB() {
 }
 
 // Ensure the database connection is established before the server starts
-connectToMongoDB();
+connectToMongoDB();*/
 
 app.post('/register', async (req, res) => {
   try {
