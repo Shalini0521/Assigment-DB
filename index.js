@@ -34,9 +34,9 @@ async function connectToMongoDB() {
 // Ensure the database connection is established before the server starts
 connectToMongoDB();
 
-app.post('/register', async (req, res) => {
+/*app.post('/register', async (req, res) => {
   try {
-    const { username, password, role } = req.body;
+    const { username, password, role, Staffid } = req.body;
 
     // Validate input
     if (!username || !password || !role) {
@@ -63,7 +63,8 @@ app.post('/register', async (req, res) => {
     const userObject = {
       username,
       password: hash,
-      role
+      role,
+      Staffid
     };
 
     // Insert the new user into the database
@@ -80,6 +81,60 @@ app.post('/register', async (req, res) => {
     console.log("User registered successfully:", username);
     res.status(201).send("Register Success!");
 
+  } catch (error) {
+    console.error("Internal Server Error:", error);
+    res.status(500).send("Internal Server Error");
+  }
+});*/
+
+app.post('/register', async (req, res) => {
+  try {
+    const { username, password, role, Staffid, adminCode } = req.body;
+
+    // Validate input
+    if (!username || !password || !role) {
+      return res.status(400).send('All fields are required.');
+    }
+
+    // Check if attempting to register as admin
+    if (role === 'Admin') {
+      const predefinedAdminCode = 'y24y'; // Replace with your actual secret code
+      if (adminCode !== predefinedAdminCode) {
+        return res.status(403).send('Forbidden: Invalid admin code.');
+      }
+    }
+
+    // Password validation
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).send(
+        'Password must be at least 8 characters long and include uppercase, lowercase, number, and special character.'
+      );
+    }
+
+    // Check if the user already exists
+    const existingUser = await client.db("Assignment").collection("User").findOne({ username });
+    if (existingUser) {
+      console.log("Username already exists.");
+      return res.status(409).send('Username already exists.');
+    }
+
+    // Hash the password
+    const hash = await bcrypt.hash(password, 10);
+
+    // Create the user object
+    const userObject = {
+      username,
+      password: hash,
+      role,
+      Staffid
+    };
+
+    // Insert the new user into the database
+    await client.db("Assignment").collection("User").insertOne(userObject);
+
+    console.log("User registered successfully:", username);
+    res.status(201).send("Register Success!");
   } catch (error) {
     console.error("Internal Server Error:", error);
     res.status(500).send("Internal Server Error");
@@ -132,7 +187,7 @@ app.post('/login', async (req, res) => {
 
     // Generate JWT
     const token = jwt.sign(
-      { user: user.username, role: user.role },
+      { user: user.username, role: user.role, Staffid : user.Staffid, Studentid : user.Studentid},
       process.env.JWT_SECRET || 'Assignment', // Use environment variable for secret
       { expiresIn: '1h' }
     );
@@ -160,12 +215,41 @@ function updateLoginAttempts(username, attempts, maxAttempts, lockoutTime, curre
 }
 
 //Staff Add Subject
-app.post('/AddSubject', StaffToken, (req, res) => {
-    /*if (req.user.role !== 'Staff') {
+/*app.post('/AddSubject/:id', StaffToken, async (req, res) => {
+  try {
+      if (req.user.role !== 'Staff') {
         return res.status(403).send('Forbidden: Only staff can add subjects');
-    }*/
-    console.log(req.body);
-    staff.AddSubject(req, res);
+      }
+      if (req.user.Staffid !== req) {
+        return res.status(403).send('Forbidden: You can only add subjects for yourself');
+      }
+
+      console.log(req.body);
+      staff.AddSubject(req, res);
+  }
+  catch (error) {
+      console.error('Internal Server Error:', error);
+      res.status(500).send('Internal Server Error');
+  }
+});*/
+
+app.post('/AddSubject/:id', StaffToken, async (req, res) => {
+  try {
+      console.log(req.user);
+      if (req.user.role !== 'Staff') {
+        return res.status(403).send('Forbidden: Only staff can add subjects');
+      }
+      if (req.user.Staffid !== req.params.id) {
+        return res.status(403).send('Forbidden: You can only add subjects for yourself');
+      }
+
+      console.log(req.body);
+      staff.AddSubject(req, res);
+  }
+  catch (error) {
+      console.error('Internal Server Error:', error);
+      res.status(500).send('Internal Server Error');
+  }
 });
 
 //Staff View Attendance List
@@ -302,6 +386,30 @@ function StaffToken(req, res, next) {
         return res.status(401).send('Again Unauthorized');
       }
     }
+    req.user = decoded;
+    next();
+  });
+}
+
+function StaffAdminToken(req, res, next) {
+  let header = req.headers.authorization;
+
+  if (!header) {
+    return res.sendStatus(401).send('Unauthorized');
+  }
+  const token = req.headers.authorization.split(' ')[1];
+  jwt.verify(token, "Assignment", function (err, decoded) {
+    console.log(err)
+    if (err) {
+      return res.sendStatus(401).send('Unauthorized');
+    }
+    else {
+      console.log(decoded);
+      if ( (decoded.role != 'Staff') || (decoded.role!='Admin') ) {
+        return res.status(401).send('Again Unauthorized');
+      }
+    }
+    req.user = decoded;
     next();
   });
 }
