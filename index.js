@@ -34,31 +34,6 @@ async function connectToMongoDB() {
 // Ensure the database connection is established before the server starts
 connectToMongoDB();
 
-/*const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://Azie:<db_password>@azie.33okh.mongodb.net/?retryWrites=true&w=majority&appName=Azie";
-
-const client = new MongoClient(uri, {
-  serverApi: {
-    version: ServerApiVersion.v1,
-    strict: true,
-    deprecationErrors: true,
-  },
-});
-
-// Connect to MongoDB and keep the connection open
-async function connectToMongoDB() {
-  try {
-    await client.connect();
-    console.log("Pinged your deployment. You successfully connected to MongoDB!");
-  } catch (error) {
-    console.error("Failed to connect to MongoDB:", error);
-    process.exit(1); // Exit the app if MongoDB connection fails
-  }
-}
-
-// Ensure the database connection is established before the server starts
-connectToMongoDB();*/
-
 app.post('/register', async (req, res) => {
   try {
     const { username, password, role } = req.body;
@@ -110,39 +85,6 @@ app.post('/register', async (req, res) => {
     res.status(500).send("Internal Server Error");
   }
 });
-
-
-//login
-/*app.post('/login', async (req, res) => {
-  console.log('login', req.body);
-  const { username, password, role } = req.body;
-
-  client.db("Assignment").collection("User").findOne({ "username": username }).then((user) => {
-    const hash = bcrypt.hashSync(password, 10);
-    console.log(user);
-
-    if (user) {
-      bcrypt.compare(password, user.password, function (err, result) {
-        if (result) {
-
-          const token = jwt.sign({
-
-            user: user.username,
-            role: user.role
-          }, 'Assignment', { expiresIn: '20h' });
-          console.log('Login Successfully');
-
-          res.send(token)
-
-        } else {
-          res.send('wrong password')
-        }
-      });
-    } else {
-      res.send('user not found')
-    }
-  })
-});*/
 
 const rateLimitMap = new Map(); // To track login attempts
 
@@ -226,11 +168,6 @@ app.post('/AddSubject', StaffToken, (req, res) => {
     staff.AddSubject(req, res);
 });
 
-/*app.post('/AddSubject', async (req, res) => {
-    console.log(req.body);
-    staff.AddSubject(req, res);
-})*/
-
 //Staff View Attendance List
 app.post('/AttendanceList', StaffToken, async (req, res) => {
     /*if (req.user.role !== 'Staff') {
@@ -239,11 +176,6 @@ app.post('/AttendanceList', StaffToken, async (req, res) => {
     console.log(req.body);
     staff.AttendanceList(req, res);
 })
-
-/*app.post('/AttendanceList', async (req, res) => {
-    console.log(req.body);
-    staff.AttendanceList(req, res);
-})*/
 
 //Student Record Attendance
 app.post('/RecordAttendance', StudentToken, async (req, res) => {
@@ -254,11 +186,6 @@ app.post('/RecordAttendance', StudentToken, async (req, res) => {
     student.RecordAttendance(req, res);
 })
 
-/*app.post('/RecordAttendance', async (req, res) => {
-    console.log(req.body);
-    student.RecordAttendance(req, res);
-})*/
-
 //Student View Attendance
 app.post('/viewAttendance', StudentToken, async (req, res) => {
     /*if (req.user.role !== 'Student') {
@@ -267,11 +194,6 @@ app.post('/viewAttendance', StudentToken, async (req, res) => {
     console.log(req.body);
     student.viewAttendance(req, res);
 })
-
-/*app.post('/viewAttendance', async (req, res) => {
-    console.log(req.body);
-    student.viewAttendance(req, res);
-})*/
 
 //Administrator Add Student
 app.post('/AddStudent', AdminToken, async (req, res) => {
@@ -282,11 +204,6 @@ app.post('/AddStudent', AdminToken, async (req, res) => {
     administrator.AddStudent(req, res);
 })
 
-/*app.post('/AddStudent', async (req, res) => {
-    console.log(req.body);
-    administrator.AddStudent(req, res);
-})*/
-
 //Administrator Add Staff
 app.post('/AddStaff', AdminToken, async (req, res) => {
     /*if (req.user.role !== 'Admin') {
@@ -295,11 +212,6 @@ app.post('/AddStaff', AdminToken, async (req, res) => {
     console.log(req.body);
     administrator.AddStaff(req, res);
 })
-
-/*app.post('/AddStaff', async (req, res) => {
-    console.log(req.body);
-    administrator.AddStaff(req, res);
-})*/
 
 //Administrator Add Program
 app.post('/AddProgram', AdminToken, async (req, res) => {
@@ -310,11 +222,6 @@ app.post('/AddProgram', AdminToken, async (req, res) => {
     administrator.AddProgram(req, res);
 })
 
-/*app.post('/AddProgram', async (req, res) => {
-    console.log(req.body);
-    administrator.AddProgram(req, res);
-})*/
-
 //Administrator View Student List
 app.post('/viewStudentList', AdminToken, async (req, res) => {
     /*if (req.user.role !== 'Admin') {
@@ -323,11 +230,6 @@ app.post('/viewStudentList', AdminToken, async (req, res) => {
     console.log(req.body);
     administrator.viewStudentList(req, res);
 })
-
-/*app.post('/viewStudentList', async (req, res) => {
-    console.log(req.body);
-    administrator.viewStudentList(req, res);
-})*/
 
 //logout
 app.post('/logout', (req, res) => {
