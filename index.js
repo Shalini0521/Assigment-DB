@@ -408,15 +408,15 @@ app.post('/viewStudentList', AdminToken, async (req, res) => {
 })*/
 
 //logout
-/*app.post('/logout', (req, res) => {
+app.post('/logout', (req, res) => {
 
   console.log('logout', req.body);
 
 res.send("See You Next Time")
 
-})*/
+})
 
-const invalidatedTokens = new Set(); // In-memory storage for invalidated tokens (use a persistent store in production)
+/*const invalidatedTokens = new Set(); // In-memory storage for invalidated tokens (use a persistent store in production)
 
 // Secure Logout Endpoint
 app.post('/logout', (req, res) => {
@@ -451,7 +451,7 @@ app.use((req, res, next) => {
     return res.status(401).json({ message: "Token is invalid. Please log in again." });
   }
   next();
-});
+});/*
 
 // Start the server
 app.listen(port, () => {
