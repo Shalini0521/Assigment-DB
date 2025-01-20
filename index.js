@@ -134,7 +134,7 @@ app.post('/login', async (req, res) => {
     const token = jwt.sign(
       { user: user.username, role: user.role },
       process.env.JWT_SECRET || 'Assignment', // Use environment variable for secret
-      { expiresIn: '20h' }
+      { expiresIn: '1h' }
     );
 
     console.log('Login Successful');
